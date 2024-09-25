@@ -1,5 +1,7 @@
 plugins {
     id("java")
+    application // Adding the application plugin to support running Java applications
+
 }
 
 group = "edu.hsutx"
@@ -17,3 +19,9 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+application {
+    // You can set a default main class here if needed, or leave it unset since we define specific tasks below.
+    mainClass.set("edu.hsutx.CowboySeatsApplication")
+}
+

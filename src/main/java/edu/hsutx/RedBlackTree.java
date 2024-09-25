@@ -18,16 +18,17 @@ package edu.hsutx;
  */
 public class RedBlackTree<E> {
     Node root;
+    int size;
 
-    private class Node<E> {
-        public int key;
+    protected class Node {
+        public String key;
         public E value;
         public Node left;
         public Node right;
         public Node parent;
         public boolean color; // true = red, false = black
 
-        public Node(int key, E value, Node parent, boolean color) {
+        public Node(String key, E value, Node parent, boolean color) {
             this.key = key;
             this.value = value;
             this.parent = parent;
@@ -50,23 +51,26 @@ public class RedBlackTree<E> {
     }
 
     public RedBlackTree() {
-        root = null; // Start with an empty tree
+        root = null; // Start with an empty tree.  This is the one time we can have a null ptr instead of a null key node
+        size = 0;
     }
 
-    public void insert(int key, String value) {
+    public void insert(String key, E value) {
         // TODO - Insert a new node into the tree with key and value
         // You must handle rebalancing the tree after inserting
         // 1. Insert the node as you would in a regular BST.
         // 2. Recolor and rotate to restore Red-Black Tree properties.
+        // Make sure to add 1 to size if node is successfully added
     }
 
-    public void delete(int key) {
+    public void delete(String key) {
         // TODO - Implement deletion for a Red-Black Tree
         // Will need to handle three cases similar to the Binary Search Tree
         // 1. Node to be deleted has no children
         // 2. Node to be deleted has one child
         // 3. Node to be deleted has two children
         // Additionally, you must handle rebalancing after deletion to restore Red-Black Tree properties
+        // make sure to subtract one from size if node is successfully added
     }
 
     private void fixInsertion(Node node) {
@@ -90,14 +94,14 @@ public class RedBlackTree<E> {
         // Right rotation is used to restore balance after insertion or deletion
     }
 
-    Node find(int key) {
+    Node find(String key) {
         // TODO - Search for the node with the given key
         // If the key exists in the tree, return the Node where it is located
         // Otherwise, return null
         return null;
     }
 
-    public String getValue(int key) {
+    public E getValue(String key) {
         // TODO - Use find() to locate the node with the given key and return its value
         // If the key does not exist, return null
         return null;
@@ -108,7 +112,7 @@ public class RedBlackTree<E> {
     }
 
     // returns the depth of the node with key, or 0 if it doesn't exist
-    public int getDepth(int key) {
+    public int getDepth(String key) {
         Node node = find(key);
         if (node != null) return node.getDepth();
         return 0;
@@ -121,6 +125,9 @@ public class RedBlackTree<E> {
 
     private boolean isBlack(Node node) {
         return node == null || node.color == false; // Black is false, and null nodes are black
+    }
+    public int getSize() {
+        return size;
     }
 
     // Do not alter this method
