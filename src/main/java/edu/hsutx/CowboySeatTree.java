@@ -69,4 +69,7 @@ public class CowboySeatTree extends RedBlackTree<SeatAssignment> {
 
     }
 
+    public Node getRoot() {
+        return this.root;
+    }
 }

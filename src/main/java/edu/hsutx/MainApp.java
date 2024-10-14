@@ -8,15 +8,27 @@ public class MainApp {
 
         // Initialize the view (Swing-based GUI)
         SwingView view = new SwingView();
-        javax.swing.SwingUtilities.invokeLater(() -> view.createAndShowGUI());
 
-        // Initialize the controller with the model and view
-        ReservationController controller = new ReservationController(seatTree, view);
+        // Use SwingUtilities to ensure GUI is created on the EDT
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            // Create and display the GUI
+            view.createAndShowGUI();
 
-        // Display the view (start the GUI)
+            // Initialize the controller with the model and view
+            ReservationController controller = new ReservationController(seatTree, view);
 
+            // Delay the start of CSV processing to ensure the GUI is fully initialized
+            // You can use a small delay here to ensure everything is in place
+            new Thread(() -> {
+                try {
+                    Thread.sleep(500); // Add a small delay to ensure the GUI is visible
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-        // Start processing CSV or handle user inputs via the controller
-        controller.processCSV("data/reservations.csv");
+                // Start processing the CSV file after the GUI is visible
+                controller.processCSV("data/reservations.csv");
+            }).start();
+        });
     }
 }

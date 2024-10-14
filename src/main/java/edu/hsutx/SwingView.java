@@ -12,17 +12,18 @@ public class SwingView extends JFrame {
 
     private BufferedImage stadiumImage;
     private JPanel stadiumPanel;
+    private int updateCount=0;
 
     // Constructor to set up the JFrame
     public SwingView() {
         setTitle("Stadium Seat Reservations");
-        setSize(1200, 1100);
+        setSize(2200, 1100);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // Add components for visualization (e.g., tree and stadium layout)
         JPanel treePanel = new JPanel();
-        //add(treePanel, BorderLayout.CENTER);
+        add(treePanel, BorderLayout.CENTER);
 
         // Create the stadium image (1000x1000 pixels, all black initially)
         stadiumImage = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
@@ -50,8 +51,7 @@ public class SwingView extends JFrame {
 
     // Method to show the GUI
     public void createAndShowGUI() {
-        SwingView view = new SwingView();
-        view.setVisible(true);
+        this.setVisible(true);
     }
 
     // Method to update the stadium visualization with colored seats
@@ -77,20 +77,60 @@ public class SwingView extends JFrame {
         // Revalidate and repaint the panel to show the updated image
         stadiumPanel.revalidate();
         stadiumPanel.repaint();
-        File outputfile = new File("image.jpg");
-        try {
-            ImageIO.write(stadiumImage, "jpg", outputfile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        updateCount++;
+        if (updateCount % 20 == 0) {
+            File outputfile = new File("image.jpg");
+            try {
+                ImageIO.write(stadiumImage, "jpg", outputfile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
-    // Methods to update the GUI based on the state of the model (e.g., refresh the tree display)
     public void updateTreeVisualization(CowboySeatTree tree) {
-        // TODO - Implement This
-        // Logic to update the display of the Red-Black Tree
-        // E.g., Repaint the panel where the tree is shown
+        JPanel treePanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (tree != null && tree.getRoot() != null) {
+                    drawTree(g, tree.getRoot(), getWidth() / 2, 50, getWidth() / 4);
+                }
+            }
+
+            // Recursive method to draw the tree nodes and edges
+            private void drawTree(Graphics g, CowboySeatTree.Node node, int x, int y, int xOffset) {
+                if (node == null) return;
+
+                // Set the node color (red or black)
+                g.setColor(node.color ? Color.RED : Color.BLACK);
+
+                // Draw the node as a circle with the key inside it
+                g.fillOval(x - 15, y - 15, 30, 30);  // Draw the node circle
+                g.setColor(Color.WHITE);  // Set color for the text
+                g.drawString(node.key, x - 10, y + 5);  // Draw the key inside the node
+
+                // Draw the left child and the connecting line
+                if (node.left != null) {
+                    g.setColor(Color.BLACK);  // Line color
+                    g.drawLine(x, y, x - xOffset, y + 50);  // Draw a line to the left child
+                    drawTree(g, node.left, x - xOffset, y + 50, xOffset / 2);  // Recursive call for the left child
+                }
+
+                // Draw the right child and the connecting line
+                if (node.right != null) {
+                    g.setColor(Color.BLACK);  // Line color
+                    g.drawLine(x, y, x + xOffset, y + 50);  // Draw a line to the right child
+                    drawTree(g, node.right, x + xOffset, y + 50, xOffset / 2);  // Recursive call for the right child
+                }
+            }
+        };
+
+        treePanel.setPreferredSize(new Dimension(1000, 600));  // Adjust size as needed
+        add(treePanel, BorderLayout.CENTER);  // Add the tree panel to the main frame
+        treePanel.repaint();  // Repaint to refresh the visualization
     }
+
 
 }
 
