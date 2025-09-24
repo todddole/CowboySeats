@@ -26,7 +26,9 @@ public class ReservationController {
                 HashMap<String, String> keyNamePairs = new HashMap<>();
                 BufferedReader br;
 
-                seatTree.insert(new SeatAssignment(999999, 1));  // Add starting empty seats to the tree
+
+                seatTree.insert(new SeatAssignment(999999, 1));  // Add starting empty seats to the tree}
+
                 System.out.println("Inserted starting empty seats");
 
                 try {
@@ -121,6 +123,9 @@ public class ReservationController {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (Exception e) {
+                    System.err.println("Exception occurred during CSV processing:");
+                    e.printStackTrace();
                 }
                 System.out.println("File is fully read.");
                 return null;
@@ -128,7 +133,23 @@ public class ReservationController {
 
             @Override
             protected void done() {
-                System.out.println("Processing complete");
+                try {
+                    get(); // This will throw any exception that occurred in doInBackground()
+                    System.out.println("Processing complete");
+                } catch (java.util.concurrent.ExecutionException e) {
+                    System.err.println("Exception occurred in background thread:");
+                    Throwable cause = e.getCause();
+                    if (cause != null) {
+                        cause.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Exception in background thread:\n" + cause.getClass().getSimpleName() + ": " + cause.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Exception in background thread:\n" + e.getClass().getSimpleName() + ": " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Exception occurred in background thread:");
+                    e.printStackTrace();
+                }
                 // Code that runs after the background task is complete (if any cleanup is needed)
             }
         };

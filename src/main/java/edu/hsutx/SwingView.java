@@ -23,7 +23,16 @@ public class SwingView extends JFrame {
     // Constructor to set up the JFrame
     public SwingView() {
         setTitle("Stadium Seat Reservations");
-        setSize(2200, 1100);
+
+        // Get primary monitor dimensions and scale appropriately
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice primaryDevice = ge.getDefaultScreenDevice();
+        Rectangle primaryBounds = primaryDevice.getDefaultConfiguration().getBounds();
+        int width = (int) (primaryBounds.width * 0.9);  // Use 90% of primary screen width
+        int height = (int) (primaryBounds.height * 0.8);  // Use 80% of primary screen height
+
+        setSize(width, height);
+        setLocationRelativeTo(null);  // Center the window
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 

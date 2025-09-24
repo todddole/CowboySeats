@@ -1,34 +1,49 @@
 package edu.hsutx;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 public class MainApp {
+    private static final Logger logger = Logger.getLogger(MainApp.class.getName());
+
+    private static void report(String where, Throwable e) {
+        e.printStackTrace(); // still print (use a logger if you prefer)
+        javax.swing.SwingUtilities.invokeLater(() ->
+                javax.swing.JOptionPane.showMessageDialog(
+                        null,
+                        where + ":\n" + e.getClass().getSimpleName() + ": " + e.getMessage(),
+                        "Unexpected Error",
+                        javax.swing.JOptionPane.ERROR_MESSAGE
+                )
+        );
+    }
 
     public static void main(String[] args) {
-        // Initialize the model (CowboySeatTree)
-        CowboySeatTree seatTree = new CowboySeatTree();
 
-        // Initialize the view (Swing-based GUI)
+
+        // 1) Catch uncaught exceptions from *any* non-EDT thread
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> report("Uncaught in " + t.getName(), e));
+
+        // 2) Catch exceptions on the EDT by pushing a guarding EventQueue
+        java.awt.Toolkit.getDefaultToolkit().getSystemEventQueue().push(new java.awt.EventQueue() {
+            @Override protected void dispatchEvent(java.awt.AWTEvent event) {
+                try {
+                    super.dispatchEvent(event);
+                } catch (Throwable e) {
+                    report("Uncaught on EDT", e);
+                }
+            }
+        });
+
+        CowboySeatTree seatTree = new CowboySeatTree();
         SwingView view = new SwingView();
 
-        // Use SwingUtilities to ensure GUI is created on the EDT
         javax.swing.SwingUtilities.invokeLater(() -> {
-            // Create and display the GUI
             view.createAndShowGUI();
-
-            // Initialize the controller with the model and view
             ReservationController controller = new ReservationController(seatTree, view);
 
-            // Delay the start of CSV processing to ensure the GUI is fully initialized
-            // You can use a small delay here to ensure everything is in place
-            new Thread(() -> {
-                try {
-                    Thread.sleep(500); // Add a small delay to ensure the GUI is visible
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                // Start processing the CSV file after the GUI is visible
-                controller.processCSV("data/reservations.csv");
-            }).start();
+            // Kick off background work (no arbitrary sleep needed)
+            new Thread(() -> controller.processCSV("data/reservations.csv"), "CSV-Worker").start();
         });
     }
 }
