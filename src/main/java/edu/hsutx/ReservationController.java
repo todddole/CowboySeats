@@ -123,10 +123,8 @@ public class ReservationController {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                } catch (Exception e) {
-                    System.err.println("Exception occurred during CSV processing:");
-                    e.printStackTrace();
                 }
+
                 System.out.println("File is fully read.");
                 return null;
             }
