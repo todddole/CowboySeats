@@ -75,14 +75,15 @@ public class RedBlackTreeTest {
     @Test
     public void testInsertRequiresRecoloring() {
         // Insert nodes to create a situation that requires recoloring
+        tree.insert("b", 1);
+        tree.insert("c", 2);
         tree.insert("a", 1);
-        tree.insert("b", 2);
-        tree.insert("c", 3);
+        tree.insert("d", 3);
 
         assertTrue(tree.validateRedBlackTree(), "Tree should be valid after insertions requiring recoloring.");
         assertEquals(1, tree.getValue("a"));
-        assertEquals(2, tree.getValue("b"));
-        assertEquals(3, tree.getValue("c"));
+        assertEquals(1, tree.getValue("b"));
+        assertEquals(2, tree.getValue("c"));
     }
 
     @Test

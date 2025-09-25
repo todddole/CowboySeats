@@ -148,7 +148,7 @@ public class RedBlackTree<E> {
     // Helper method to check if the current node maintains Red-Black properties
     private boolean validateNode(Node node, int blackCount, int expectedBlackCount) {
         // Rule 3: Null nodes (leaves) are black
-        if (node == null) {
+        if (node == null || node.key == null) {
             if (expectedBlackCount == -1) {
                 expectedBlackCount = blackCount; // Set the black count for the first path
             }
