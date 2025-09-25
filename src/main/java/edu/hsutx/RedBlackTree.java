@@ -114,7 +114,7 @@ public class RedBlackTree<E> {
     // returns the depth of the node with key, or 0 if it doesn't exist
     public int getDepth(String key) {
         Node node = find(key);
-        if (node != null) return node.getDepth();
+        if (node != null && node.key!=null) return node.getDepth();
         return 0;
     }
 
